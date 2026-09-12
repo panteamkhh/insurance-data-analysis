@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "insurance-data-analysis"
+version = "1.0.0"
+description = "Exploratory Python analysis of an insurance policy and claims dataset: portfolio KPIs, loss ratios, claim outcomes, demographics and trends."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Panteamkhh", email = "pantea.mkh18@gmail.com" }]
+keywords = ["data-analysis", "pandas", "insurance", "claims", "portfolio", "visualization"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "matplotlib>=3.7",
+    "seaborn>=0.12",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.5",
+    "black>=24.0",
+    "jupyter>=1.0",
+    "nbstripout>=0.7",
+    "pre-commit>=3.7",
+]
+
+[project.urls]
+Homepage = "https://github.com/panteamkhh/insurance-data-analysis"
+Repository = "https://github.com/panteamkhh/insurance-data-analysis"
+Issues = "https://github.com/panteamkhh/insurance-data-analysis/issues"
+
+[project.scripts]
+insurance-analysis = "src.run_analysis:main"
+
+[tool.setuptools]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+pythonpath = ["."]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = ["notebooks", "output", "screenshots"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+extend-exclude = '/(notebooks|output|screenshots)/'

@@ -18,6 +18,7 @@ whether premium is priced in line with the cover being sold.
 
 - [Dataset](#dataset)
 - [Analysis in Python](#analysis-in-python)
+- [Power BI dashboard](#power-bi-dashboard)
 - [Key results](#key-results)
 - [Tech stack](#tech-stack)
 - [Project structure](#project-structure)
@@ -101,6 +102,29 @@ numbers and `visualization.py` renders the chart — so the notebook re-runs
 end-to-end on fresh data with no manual steps. Intermediate, premium/coverage,
 status-mix and claim-severity charts are in [`screenshots/`](screenshots).
 
+## Power BI dashboard
+
+The same portfolio is packaged as an interactive Power BI report
+([`powerbi/insurance-dashboard.pbix`](powerbi/insurance-dashboard.pbix)) so
+non-technical stakeholders can explore it without touching Python. It reads the
+raw CSV at [`data/insurance_data.csv`](data/insurance_data.csv) and drives the
+headline numbers from slicers.
+
+<p align="center"><img src="powerbi/screenshots/Prism Insurance PVT.LTD.PNG" width="820"/></p>
+
+- **KPI cards** — premium (5.98M), coverage (600.55M) and claim amount (16.91M).
+- **Premium by policy type** — Travel leads, matching the Python analysis.
+- **Active vs. inactive policies** — 74.9% inactive, 25.1% active.
+- **Claims by status** — rejected / settled / pending funnel.
+- **Claim amount by age group** and a **policy-type matrix** of claim outcomes
+  by status.
+
+> The dashboard is built directly on the raw file, so its totals include the
+> few duplicate rows that the Python pipeline removes — hence the small
+> differences (e.g. 5.98M vs. 5.97M premium). The Python package remains the
+> source of truth for the numbers. See [`powerbi/README.md`](powerbi/README.md)
+> for details.
+
 ## Key results
 
 - **10,000 unique policies** (from 10,004 raw rows, after dropping duplicates)
@@ -118,6 +142,7 @@ status-mix and claim-severity charts are in [`screenshots/`](screenshots).
 ## Tech stack
 
 **Python** — pandas, numpy, matplotlib, seaborn, Jupyter
+**Power BI** — interactive report with slicers, KPI cards and a claim matrix
 **Tooling** — pytest, ruff, black, pre-commit, GitHub Actions
 
 ## Project structure

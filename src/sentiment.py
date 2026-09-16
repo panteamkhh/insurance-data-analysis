@@ -16,6 +16,7 @@ of 0-1 scores -- plus one shared label mapping:
 from __future__ import annotations
 
 import importlib.util
+from pathlib import Path
 
 import pandas as pd
 
@@ -93,3 +94,61 @@ class TransformerSentimentScorer:
             return result.get("positive", 0.0) + 0.5 * result.get("neutral", 0.0)
 
         return series.map(_one)
+
+
+class SklearnSentimentScorer:
+    """TF-IDF + linear model distilled from the transformer.
+
+    Loads a joblib artifact and converts class probabilities into a 0-1 score
+    with an expected-value mapping (Excellent=1, Good=0.5, Needs Improvement=0).
+    Runs without ``torch``, which keeps the default pipeline light and fast.
+    """
+
+    name = "sklearn"
+
+    def __init__(self, model_path: str | None = None) -> None:
+        import joblib
+
+        from .config import SENTIMENT_MODEL_FILE
+
+        self.model_path = Path(model_path) if model_path else SENTIMENT_MODEL_FILE
+        if not Path(self.model_path).exists():
+            raise FileNotFoundError(
+                f"Trained sentiment model not found at {self.model_path}. "
+                "Run 'python -m src.train_sentiment' to create it."
+            )
+        self._model = joblib.load(self.model_path)
+
+    def score(self, texts) -> pd.Series:
+        import numpy as np
+
+        series = pd.Series(texts).astype(str)
+        probabilities = self._model.predict_proba(series)
+        weights = np.array([SCORE_WEIGHTS.get(label, 0.0) for label in self._model.classes_])
+        return pd.Series(probabilities @ weights, index=series.index)
+
+
+def get_default_scorer(prefer: tuple[str, ...] = ("sklearn", "transformer", "vader")):
+    """Return the first scorer available from ``prefer``, in order."""
+    for name in prefer:
+        try:
+            if name == "sklearn":
+                return SklearnSentimentScorer()
+            if name == "transformer" and transformer_available():
+                return TransformerSentimentScorer()
+            if name == "vader":
+                return LexiconSentimentScorer()
+        except Exception:  # noqa: BLE001 - fall through to the next candidate
+            continue
+    raise RuntimeError("No sentiment scorer is available.")
+
+
+def add_sentiment_columns(
+    df: pd.DataFrame, text_column: str = "Feedback", scorer=None
+) -> pd.DataFrame:
+    """Return a copy of ``df`` with ``sentiment_score`` and ``sentiment_label``."""
+    scorer = scorer or get_default_scorer()
+    result = df.copy()
+    result["sentiment_score"] = scorer.score(result[text_column])
+    result["sentiment_label"] = label_series(result["sentiment_score"])
+    return result

@@ -1,0 +1,53 @@
+{
+  "dataset_size": 97,
+  "teacher": "transformer",
+  "label_counts": {
+    "Excellent": 54,
+    "Needs Improvement": 29,
+    "Good": 14
+  },
+  "candidates": [
+    {
+      "vectorizer": "char",
+      "classifier": "linearsvc",
+      "accuracy": 0.8969,
+      "macro_f1": 0.8649
+    },
+    {
+      "vectorizer": "char",
+      "classifier": "logreg",
+      "accuracy": 0.8969,
+      "macro_f1": 0.8649
+    },
+    {
+      "vectorizer": "word",
+      "classifier": "complementnb",
+      "accuracy": 0.8763,
+      "macro_f1": 0.8451
+    },
+    {
+      "vectorizer": "char",
+      "classifier": "complementnb",
+      "accuracy": 0.8763,
+      "macro_f1": 0.835
+    },
+    {
+      "vectorizer": "word",
+      "classifier": "linearsvc",
+      "accuracy": 0.866,
+      "macro_f1": 0.8237
+    },
+    {
+      "vectorizer": "word",
+      "classifier": "logreg",
+      "accuracy": 0.8351,
+      "macro_f1": 0.7966
+    }
+  ],
+  "best": {
+    "vectorizer": "char",
+    "classifier": "linearsvc",
+    "accuracy": 0.8969,
+    "macro_f1": 0.8649
+  }
+}

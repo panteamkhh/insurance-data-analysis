@@ -39,3 +39,22 @@ def score_to_label(score: float) -> str:
 def label_series(scores: pd.Series) -> pd.Series:
     """Vectorised :func:`score_to_label` over a Series of scores."""
     return scores.map(score_to_label)
+
+
+class LexiconSentimentScorer:
+    """VADER lexicon scorer -- fast, offline and training-free.
+
+    The raw VADER compound score (-1..1) is rescaled to 0..1 so every scorer in
+    this module speaks the same language.
+    """
+
+    name = "vader"
+
+    def __init__(self) -> None:
+        from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+
+        self._analyzer = SentimentIntensityAnalyzer()
+
+    def score(self, texts) -> pd.Series:
+        series = pd.Series(texts).astype(str)
+        return series.map(lambda text: (self._analyzer.polarity_scores(text)["compound"] + 1) / 2)

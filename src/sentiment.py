@@ -58,3 +58,38 @@ class LexiconSentimentScorer:
     def score(self, texts) -> pd.Series:
         series = pd.Series(texts).astype(str)
         return series.map(lambda text: (self._analyzer.polarity_scores(text)["compound"] + 1) / 2)
+
+
+def transformer_available() -> bool:
+    """True when both ``torch`` and ``transformers`` can be imported."""
+    return all(importlib.util.find_spec(name) is not None for name in ("torch", "transformers"))
+
+
+class TransformerSentimentScorer:
+    """Pretrained RoBERTa sentiment model (positive / neutral / negative).
+
+    The score is ``P(positive) + 0.5 * P(neutral)`` so neutral text lands in the
+    middle of the 0-1 range. This is the most accurate scorer in the module and
+    is used to create the "teacher" labels for the distilled sklearn model.
+    """
+
+    name = "transformer"
+
+    def __init__(self, model_name: str | None = None) -> None:
+        from transformers import pipeline
+
+        from .config import SENTIMENT_MODEL_NAME
+
+        self.model_name = model_name or SENTIMENT_MODEL_NAME
+        self._pipeline = pipeline(
+            "sentiment-analysis", model=self.model_name, top_k=None, truncation=True
+        )
+
+    def score(self, texts) -> pd.Series:
+        series = pd.Series(texts).astype(str)
+
+        def _one(text: str) -> float:
+            result = {item["label"].lower(): item["score"] for item in self._pipeline(text)[0]}
+            return result.get("positive", 0.0) + 0.5 * result.get("neutral", 0.0)
+
+        return series.map(_one)

@@ -5,6 +5,8 @@ the dashboard look like one product. Importing this module applies the theme to
 matplotlib/seaborn globally.
 """
 
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -41,6 +43,7 @@ __all__ = [
     "RED",
     "LABEL_COLORS",
     "apply_theme",
+    "save_figure",
 ]
 
 
@@ -71,3 +74,14 @@ def apply_theme() -> None:
 
 
 apply_theme()
+
+
+def save_figure(fig, filename: str, directory=None) -> Path:
+    """Save a figure to the screenshots directory (or ``directory``) as PNG."""
+    from .config import SCREENSHOTS_DIR
+
+    target_dir = Path(directory) if directory else SCREENSHOTS_DIR
+    target_dir.mkdir(parents=True, exist_ok=True)
+    path = target_dir / filename
+    fig.savefig(path, dpi=150, bbox_inches="tight", facecolor=BACKGROUND)
+    return path

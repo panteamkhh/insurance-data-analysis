@@ -12,7 +12,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import analysis, visualization
-from .config import DATA_FILE, OUTPUT_DIR
+from .config import DATA_FILE, OUTPUT_DIR, SCREENSHOTS_DIR
 from .data_cleaning import clean_data, validate_data
 from .data_loader import load_data
 from .feature_engineering import compute_derived_columns
@@ -65,7 +65,7 @@ def run(filepath=DATA_FILE, output_dir=OUTPUT_DIR, export: bool = True) -> pd.Da
     print(f"Total premium: {summary['Total Premium']:,.0f}")
     print(f"Loss ratio: {summary['Loss Ratio %']}%")
     print(f"Premium vs. coverage correlation (r): {corr:.3f}")
-    print(f"Charts written to: {visualization.SCREENSHOTS_DIR}")
+    print(f"Charts written to: {SCREENSHOTS_DIR}")
     return df
 
 

@@ -8,26 +8,13 @@ All charts share the dark, gold-accented theme of the companion Power BI
 dashboard so the two halves of the project look like one product.
 """
 
-import os
-
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import seaborn as sns
 
-from .config import SCREENSHOTS_DIR
-from .theme import BACKGROUND, GOLD, GREEN, MUTED, RED, TEAL, TEXT
+from .theme import BACKGROUND, GOLD, GREEN, MUTED, RED, TEAL, TEXT, save_figure
 
 NUMBER_FORMAT = "{x:,.0f}"
-
-
-def _save(fig, filename: str):
-    os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
-    fig.savefig(
-        os.path.join(SCREENSHOTS_DIR, filename),
-        dpi=150,
-        bbox_inches="tight",
-        facecolor=BACKGROUND,
-    )
 
 
 def _format_number(axis, which: str = "x"):
@@ -50,7 +37,7 @@ def plot_policies_and_premium(by_type):
     _format_number(axes[1])
 
     fig.tight_layout()
-    _save(fig, "01_policies_and_premium_by_type.png")
+    save_figure(fig, "01_policies_and_premium_by_type.png")
     return fig
 
 
@@ -69,7 +56,7 @@ def plot_premium_and_coverage(by_type):
     _format_number(axes[1])
 
     fig.tight_layout()
-    _save(fig, "02_premium_and_coverage_by_type.png")
+    save_figure(fig, "02_premium_and_coverage_by_type.png")
     return fig
 
 
@@ -87,7 +74,7 @@ def plot_claim_outcomes(by_type):
     ax.legend(title="Claim status", loc="lower right", frameon=True)
     ax.grid(axis="y", visible=False)
     fig.tight_layout()
-    _save(fig, "03_claim_outcomes_by_type.png")
+    save_figure(fig, "03_claim_outcomes_by_type.png")
     return fig
 
 
@@ -101,7 +88,7 @@ def plot_loss_ratio(loss_ratio):
     ax.legend()
     ax.grid(axis="y", visible=False)
     fig.tight_layout()
-    _save(fig, "04_loss_ratio_by_type.png")
+    save_figure(fig, "04_loss_ratio_by_type.png")
     return fig
 
 
@@ -120,7 +107,7 @@ def plot_claim_status_distribution(status_counts):
     )
     ax.set_title("Claim Status Distribution")
     fig.tight_layout()
-    _save(fig, "05_claim_status_distribution.png")
+    save_figure(fig, "05_claim_status_distribution.png")
     return fig
 
 
@@ -137,7 +124,7 @@ def plot_claims_by_gender(by_gender):
     axes[1].set_ylabel("Loss Ratio (%)")
 
     fig.tight_layout()
-    _save(fig, "06_claims_by_gender.png")
+    save_figure(fig, "06_claims_by_gender.png")
     return fig
 
 
@@ -163,7 +150,7 @@ def plot_age_bands(by_age):
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax.legend(lines + lines2, labels + labels2, loc="upper right")
     fig.tight_layout()
-    _save(fig, "07_age_band_analysis.png")
+    save_figure(fig, "07_age_band_analysis.png")
     return fig
 
 
@@ -182,7 +169,7 @@ def plot_policies_over_time(policies, claims):
     _format_number(axes[1], "y")
 
     fig.tight_layout()
-    _save(fig, "08_policies_and_claims_over_time.png")
+    save_figure(fig, "08_policies_and_claims_over_time.png")
     return fig
 
 
@@ -204,7 +191,7 @@ def plot_claim_severity(df):
     _format_number(ax)
     ax.grid(axis="y", visible=False)
     fig.tight_layout()
-    _save(fig, "09_claim_severity_by_type.png")
+    save_figure(fig, "09_claim_severity_by_type.png")
     return fig
 
 
@@ -225,5 +212,5 @@ def plot_premium_coverage_relationship(df, corr: float):
     _format_number(ax)
     _format_number(ax, "y")
     fig.tight_layout()
-    _save(fig, "10_premium_coverage_relationship.png")
+    save_figure(fig, "10_premium_coverage_relationship.png")
     return fig

@@ -36,6 +36,10 @@ output/
 *.ssmssln
 *.ssmsproj
 
+# Original feedback workbooks (the clean copy is data/customer_feedback.csv)
+data/Insurance Customer Feedback.xlsx
+data/Insurance Customer Feedback - Copy.csv
+
 # OS cruft
 .DS_Store
 Thumbs.db

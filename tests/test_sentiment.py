@@ -35,3 +35,23 @@ def test_label_series_is_vectorised():
 def test_label_series_handles_missing_values():
     scores = pd.Series([0.9, np.nan])
     assert label_series(scores).iloc[1] == "Needs Improvement"
+
+
+def test_lexicon_scorer_returns_bounded_scores():
+    from src.sentiment import LexiconSentimentScorer
+
+    scorer = LexiconSentimentScorer()
+    scores = scorer.score(["Excellent service, very satisfied!", "Terrible, very disappointed."])
+
+    assert scores.between(0, 1).all()
+    assert scores.iloc[0] > scores.iloc[1]
+
+
+def test_lexicon_scorer_preserves_index():
+    from src.sentiment import LexiconSentimentScorer
+
+    texts = pd.Series(["Great value", "Poor service"], index=[10, 20])
+    scores = LexiconSentimentScorer().score(texts)
+
+    assert scores.index.tolist() == [10, 20]
+

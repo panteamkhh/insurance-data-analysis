@@ -55,3 +55,69 @@ def test_lexicon_scorer_preserves_index():
 
     assert scores.index.tolist() == [10, 20]
 
+
+def test_sklearn_scorer_scores_from_a_saved_model(tmp_path):
+    import joblib
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.pipeline import Pipeline
+
+    from src.sentiment import SklearnSentimentScorer
+
+    texts = [
+        "excellent great satisfied",
+        "wonderful amazing recommend",
+        "good fine okay",
+        "decent acceptable",
+        "bad terrible awful",
+        "poor disappointing slow",
+        "horrible frustrating",
+        "worst unacceptable",
+    ]
+    labels = [
+        "Excellent",
+        "Excellent",
+        "Good",
+        "Good",
+        "Needs Improvement",
+        "Needs Improvement",
+        "Needs Improvement",
+        "Needs Improvement",
+    ]
+    model = Pipeline(
+        [
+            ("tfidf", TfidfVectorizer()),
+            ("clf", LogisticRegression(max_iter=1000)),
+        ]
+    ).fit(texts, labels)
+    path = tmp_path / "model.joblib"
+    joblib.dump(model, path)
+
+    scorer = SklearnSentimentScorer(model_path=str(path))
+    scores = scorer.score(["excellent great", "terrible awful"])
+
+    assert scores.between(0, 1).all()
+    assert scores.iloc[0] > scores.iloc[1]
+
+
+def test_get_default_scorer_can_select_vader():
+    from src.sentiment import get_default_scorer
+
+    assert get_default_scorer(prefer=("vader",)).name == "vader"
+
+
+def test_add_sentiment_columns():
+    from src.sentiment import add_sentiment_columns
+
+    class StubScorer:
+        name = "stub"
+
+        def score(self, texts):
+            return pd.Series([0.9, 0.1], index=pd.Series(texts).index)
+
+    df = pd.DataFrame({"Feedback": ["Great", "Bad"]})
+    result = add_sentiment_columns(df, scorer=StubScorer())
+
+    assert result["sentiment_label"].tolist() == ["Excellent", "Needs Improvement"]
+    assert "sentiment_score" in result.columns
+    assert "sentiment_score" not in df.columns

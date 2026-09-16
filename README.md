@@ -168,6 +168,8 @@ runs without a deep-learning stack — **~90% agreement and 0.86 macro F1** on
 ## Tech stack
 
 **Python** — pandas, numpy, matplotlib, seaborn, Jupyter
+**Machine learning** — scikit-learn (TF-IDF + linear models), a distilled
+sentiment classifier, and an optional Hugging Face transformer teacher
 **Power BI** — interactive report with slicers, KPI cards and a claim matrix
 **Tooling** — pytest, ruff, black, pre-commit, GitHub Actions
 
@@ -176,29 +178,43 @@ runs without a deep-learning stack — **~90% agreement and 0.86 macro F1** on
 ```
 insurance-data-analysis/
 ├── data/
-│   └── insurance_data.csv          # source policy + claim data
+│   ├── insurance_data.csv          # source policy + claim data
+│   └── customer_feedback.csv       # 97 customer reviews
 ├── docs/
 │   ├── data_dictionary.md          # column reference and business rules
+│   ├── sentiment_methodology.md    # how the sentiment model is built
 │   └── original_column_notes.docx  # original (Persian) column notes
+├── models/
+│   ├── sentiment_model.joblib      # distilled sentiment classifier
+│   └── sentiment_metrics.json      # cross-validation results
 ├── notebooks/
-│   └── Insurance_Data_Analysis.ipynb   # executed, narrative analysis
+│   ├── Insurance_Data_Analysis.ipynb
+│   └── Customer_Feedback_Sentiment.ipynb
 ├── powerbi/                        # interactive dashboard (work in progress)
 │   ├── insurance-dashboard.pbix
 │   └── screenshots/
 ├── src/                            # analysis package
 │   ├── config.py                   # project paths and constants
-│   ├── data_loader.py              # reads + validates the raw CSV
+│   ├── theme.py                    # shared dark chart theme
+│   ├── data_loader.py              # reads + validates the raw CSVs
 │   ├── data_cleaning.py            # de-duplication, dates, validation
 │   ├── feature_engineering.py      # age bands, claim lag, loss ratios
 │   ├── analysis.py                 # one function per business question
 │   ├── visualization.py            # matching chart for each question
-│   └── run_analysis.py             # end-to-end CLI entry point
-├── tests/                          # pytest suite (27 tests)
-├── screenshots/                    # chart images exported by the CLI
+│   ├── run_analysis.py             # claims analysis CLI entry point
+│   ├── text_preprocessing.py       # tokenising and stop words
+│   ├── sentiment.py                # three scorers + score-to-label mapping
+│   ├── train_sentiment.py          # distillation and model selection
+│   ├── word_analysis.py            # word frequencies and word clouds
+│   ├── feedback_visualization.py   # sentiment charts
+│   └── run_feedback_analysis.py    # feedback CLI entry point
+├── tests/                          # pytest suite
+├── screenshots/                    # chart images exported by the CLIs
 ├── output/                         # generated CSV exports (git-ignored)
 ├── pyproject.toml                  # metadata, deps, tool config
 ├── requirements.txt                # runtime dependencies
 ├── requirements-dev.txt            # runtime + dev dependencies
+├── requirements-ml.txt             # optional transformer teacher deps
 └── .github/workflows/ci.yml        # lint + format + test CI
 ```
 
@@ -217,17 +233,23 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Run the full analysis and regenerate every chart and CSV export:
+Run the claims analysis and regenerate every chart and CSV export:
 
 ```bash
 python -m src.run_analysis
 ```
 
-Or explore interactively:
+Score the customer feedback and rebuild the word clouds:
+
+```bash
+python -m src.run_feedback_analysis
+```
+
+Explore the notebooks interactively:
 
 ```bash
 pip install -r requirements-dev.txt
-jupyter notebook notebooks/Insurance_Data_Analysis.ipynb
+jupyter notebook notebooks/
 ```
 
 ## Development
@@ -256,6 +278,9 @@ CI runs lint, format checks and the test suite on Python 3.10–3.12. See
 - `HasValidClaim` groups settled and pending claims as "accepted or open", which
   is used for the claim-frequency figures.
 - Amounts are unit-less; no currency conversion is applied.
+- Sentiment labels are distilled from a pretrained transformer (weak labels), so
+  the reported accuracy measures agreement with that teacher, not human ground
+  truth. See [`docs/sentiment_methodology.md`](docs/sentiment_methodology.md).
 
 ## License
 

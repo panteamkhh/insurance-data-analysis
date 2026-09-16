@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from wordcloud import WordCloud
 
+from .config import RANDOM_SEED
 from .text_preprocessing import STOPWORDS, preprocess
 from .theme import AMBER, BACKGROUND, GOLD, GREEN, TEAL, save_figure
 
@@ -76,6 +77,7 @@ def build_wordcloud(
         prefer_horizontal=0.95,
         max_words=max_words,
         margin=2,
+        random_state=RANDOM_SEED,
     )
     return cloud.generate_from_frequencies({str(k): float(v) for k, v in frequencies.items()})
 

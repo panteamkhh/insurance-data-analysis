@@ -1,0 +1,9 @@
+# Optional, heavier dependencies used only to regenerate the transformer
+# "teacher" sentiment labels (see docs/sentiment_methodology.md).
+#
+# The committed sklearn model (models/sentiment_model.joblib) and the default
+# analysis pipeline run without any of these.
+-r requirements.txt
+
+torch>=2.2
+transformers>=4.40

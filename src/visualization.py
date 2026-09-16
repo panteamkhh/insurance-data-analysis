@@ -15,42 +15,7 @@ import matplotlib.ticker as mticker
 import seaborn as sns
 
 from .config import SCREENSHOTS_DIR
-
-# --- dashboard palette (matches powerbi/insurance-dashboard.pbix) -----
-BACKGROUND = "#1b1b1b"
-PANEL = "#262626"
-BORDER = "#3d3d3d"
-GRID = "#333333"
-TEXT = "#f2f2f2"
-MUTED = "#c9c9c9"
-GOLD = "#f2c811"
-AMBER = "#e8a33d"
-TEAL = "#3fb7c9"
-GREEN = "#6fcf97"
-RED = "#e4572e"
-
-sns.set_theme(style="dark")
-plt.rcParams.update(
-    {
-        "figure.figsize": (11, 5),
-        "figure.facecolor": BACKGROUND,
-        "savefig.facecolor": BACKGROUND,
-        "axes.facecolor": BACKGROUND,
-        "axes.edgecolor": BORDER,
-        "axes.labelcolor": TEXT,
-        "axes.titlecolor": "#ffffff",
-        "axes.titlesize": 13,
-        "axes.titleweight": "bold",
-        "axes.grid": True,
-        "grid.color": GRID,
-        "text.color": TEXT,
-        "xtick.color": MUTED,
-        "ytick.color": MUTED,
-        "legend.facecolor": PANEL,
-        "legend.edgecolor": BORDER,
-        "font.size": 11,
-    }
-)
+from .theme import BACKGROUND, GOLD, GREEN, MUTED, RED, TEAL, TEXT
 
 NUMBER_FORMAT = "{x:,.0f}"
 

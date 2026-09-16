@@ -39,3 +39,22 @@ def test_project_data_loads():
     df = load_data()
     assert len(df) > 0
     assert list(df.columns) == REQUIRED_COLUMNS
+
+
+def test_load_feedback_returns_expected_columns():
+    from src.data_loader import FEEDBACK_COLUMNS, load_feedback
+
+    df = load_feedback()
+    assert list(df.columns) == FEEDBACK_COLUMNS
+    assert len(df) > 0
+    assert df["Feedback"].str.len().gt(0).all()
+
+
+def test_load_feedback_raises_on_missing_column(tmp_path):
+    from src.data_loader import load_feedback
+
+    path = tmp_path / "feedback.csv"
+    pd.DataFrame({"Customer Name": ["A"]}).to_csv(path, index=False)
+
+    with pytest.raises(ValueError, match="Missing required column"):
+        load_feedback(path)

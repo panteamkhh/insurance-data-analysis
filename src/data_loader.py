@@ -9,7 +9,7 @@ import os
 
 import pandas as pd
 
-from .config import DATA_FILE
+from .config import DATA_FILE, FEEDBACK_FILE
 
 REQUIRED_COLUMNS = [
     "PolicyNumber",
@@ -47,3 +47,30 @@ def load_data(filepath: str | os.PathLike | None = None) -> pd.DataFrame:
         )
 
     return raw[REQUIRED_COLUMNS].copy()
+
+
+FEEDBACK_COLUMNS = ["Customer Name", "Feedback"]
+
+
+def load_feedback(filepath: str | os.PathLike | None = None) -> pd.DataFrame:
+    """Load the raw customer-feedback CSV.
+
+    Parameters
+    ----------
+    filepath:
+        Path to the source CSV. Defaults to ``data/customer_feedback.csv``.
+    """
+    path = os.fspath(FEEDBACK_FILE if filepath is None else filepath)
+    raw = pd.read_csv(path)
+
+    missing = [column for column in FEEDBACK_COLUMNS if column not in raw.columns]
+    if missing:
+        raise ValueError(
+            f"Missing required column(s) {missing} in '{path}'. "
+            f"Found columns: {list(raw.columns)}"
+        )
+
+    feedback = raw[FEEDBACK_COLUMNS].copy()
+    feedback["Feedback"] = feedback["Feedback"].astype(str).str.strip()
+    feedback = feedback[feedback["Feedback"].ne("") & feedback["Feedback"].notna()]
+    return feedback.reset_index(drop=True)

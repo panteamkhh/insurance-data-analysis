@@ -19,6 +19,7 @@ whether premium is priced in line with the cover being sold.
 - [Dataset](#dataset)
 - [Analysis in Python](#analysis-in-python)
 - [Power BI dashboard](#power-bi-dashboard)
+- [Customer feedback sentiment](#customer-feedback-sentiment)
 - [Key results](#key-results)
 - [Tech stack](#tech-stack)
 - [Project structure](#project-structure)
@@ -124,6 +125,31 @@ headline numbers from slicers.
 > differences (e.g. 5.98M vs. 5.97M premium). The Python package remains the
 > source of truth for the numbers. See [`powerbi/README.md`](powerbi/README.md)
 > for details.
+
+## Customer feedback sentiment
+
+The 97 free-text customer reviews are scored and labelled with a machine
+learning pipeline. A pretrained transformer labels the reviews (the "teacher"),
+and a lightweight TF-IDF + linear model is distilled from it so the analysis
+runs without a deep-learning stack — **~90% agreement and 0.86 macro F1** on
+5-fold cross-validation. Full write-up in
+[`docs/sentiment_methodology.md`](docs/sentiment_methodology.md).
+
+<p align="center"><img src="screenshots/feedback_04_wordcloud_all.png" width="820"/></p>
+
+<p align="center">
+  <img src="screenshots/feedback_01_sentiment_distribution.png" width="470"/>
+  <img src="screenshots/feedback_07_top_words.png" width="450"/>
+</p>
+
+- **~55% Excellent, ~10% Good and ~35% Needs Improvement.**
+- Happy customers talk about **fast, helpful, friendly service**; unhappy ones
+  about **wait times, confusing policy options and slow claims**.
+- Three interchangeable scorers (distilled sklearn model, transformer, VADER)
+  share one interface; the notebook
+  [`Customer_Feedback_Sentiment.ipynb`](notebooks/Customer_Feedback_Sentiment.ipynb)
+  walks through scoring, labelling and the word clouds.
+- Run it with `python -m src.run_feedback_analysis`.
 
 ## Key results
 

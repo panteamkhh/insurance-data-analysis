@@ -195,9 +195,13 @@ insurance-data-analysis/
 │   ├── insurance-dashboard.pbix
 │   └── screenshots/
 ├── power-query/                    # Power Query (M) recipes for the model
+│   ├── README.md
 │   ├── append-demo.md
 │   ├── merge-demo.md
-│   └── transformations.md
+│   ├── transformations.md
+│   ├── query-folding.md
+│   ├── date-table.md
+│   └── parameters-and-functions.md
 ├── src/                            # analysis package
 │   ├── config.py                   # project paths and constants
 │   ├── theme.py                    # shared dark chart theme

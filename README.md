@@ -124,7 +124,8 @@ headline numbers from slicers.
 > few duplicate rows that the Python pipeline removes — hence the small
 > differences (e.g. 5.98M vs. 5.97M premium). The Python package remains the
 > source of truth for the numbers. See [`powerbi/README.md`](powerbi/README.md)
-> for details.
+> for details. The Power Query (M) recipes used to shape the model are
+> documented in [`power-query/`](power-query).
 
 ## Customer feedback sentiment
 
@@ -193,6 +194,10 @@ insurance-data-analysis/
 ├── powerbi/                        # interactive dashboard (work in progress)
 │   ├── insurance-dashboard.pbix
 │   └── screenshots/
+├── power-query/                    # Power Query (M) recipes for the model
+│   ├── append-demo.md
+│   ├── merge-demo.md
+│   └── transformations.md
 ├── src/                            # analysis package
 │   ├── config.py                   # project paths and constants
 │   ├── theme.py                    # shared dark chart theme

@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Executed notebook `notebooks/Customer_Feedback_Sentiment.ipynb` and
   `docs/sentiment_methodology.md`.
 - Shared dark chart theme in `src/theme.py`, reused by every chart.
+- `power-query/` recipes for appending, merging and common M transformations.
 
 ### Changed
 
